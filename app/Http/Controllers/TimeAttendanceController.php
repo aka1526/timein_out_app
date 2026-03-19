@@ -1,0 +1,243 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Employee;
+use App\Models\TimeAttendance;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+use Rap2hpoutre\FastExcel\FastExcel;
+
+class TimeAttendanceController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $attendances = TimeAttendance::with('employee')
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return view('time_attendances.index', compact('attendances'));
+    }
+
+    /**
+     * Show the form for clocking in.
+     */
+    public function clockIn()
+    {
+        $employees = Employee::where('status', 'active')->get();
+        return view('time_attendances.clock_in', compact('employees'));
+    }
+
+    /**
+     * Store a newly created clock in record.
+     */
+    public function storeClockIn(Request $request)
+    {
+        // If no employee_id is provided (direct access from home), use the first active employee
+        if (!$request->has('employee_id') || empty($request->employee_id)) {
+            $employee = Employee::where('status', 'active')->first();
+
+            if (!$employee) {
+                return redirect('/')
+                    ->with('error', 'No active employee found. Please create an employee first.');
+            }
+
+            $employeeId = $employee->id;
+        } else {
+            $request->validate([
+                'employee_id' => 'required|exists:employees,id',
+            ]);
+
+            $employeeId = $request->employee_id;
+        }
+
+        $today = Carbon::today()->toDateString();
+        $currentTime = Carbon::now()->toTimeString();
+
+        // Check if employee already clocked in today
+        $existingAttendance = TimeAttendance::where('employee_id', $employeeId)
+            ->where('date', $today)
+            ->first();
+
+        if ($existingAttendance) {
+            // If accessed from home page, redirect back to home page
+            if (!$request->has('employee_id') || empty($request->employee_id)) {
+                return redirect('/')
+                    ->with('error', 'Employee already clocked in today.');
+            }
+
+            return redirect()->back()
+                ->with('error', 'Employee already clocked in today.');
+        }
+
+        TimeAttendance::create([
+            'employee_id' => $employeeId,
+            'date' => $today,
+            'time_in' => $currentTime,
+            'status' => 'present',
+        ]);
+
+        // If accessed from home page, redirect back to home page
+        if (!$request->has('employee_id') || empty($request->employee_id)) {
+            return redirect('/')
+                ->with('success', 'Clock in recorded successfully.');
+        }
+
+        return redirect()->route('time_attendances.index')
+            ->with('success', 'Clock in recorded successfully.');
+    }
+
+    /**
+     * Show the form for clocking out.
+     */
+    public function clockOut()
+    {
+        $employees = Employee::where('status', 'active')->get();
+        return view('time_attendances.clock_out', compact('employees'));
+    }
+
+    /**
+     * Update the clock out time.
+     */
+    public function updateClockOut(Request $request)
+    {
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+        ]);
+
+        $today = Carbon::today()->toDateString();
+        $currentTime = Carbon::now()->toTimeString();
+
+        // Check if employee has clocked in but not out today
+        $attendance = TimeAttendance::where('employee_id', $request->employee_id)
+            ->where('date', $today)
+            ->whereNull('time_out')
+            ->first();
+
+        if (!$attendance) {
+            return redirect('/')
+                ->with('error', 'Employee has not clocked in today or already clocked out.');
+        }
+
+        $attendance->update([
+            'time_out' => $currentTime,
+        ]);
+
+        return redirect()->route('time_attendances.index')
+            ->with('success', 'Clock out recorded successfully.');
+    }
+
+    /**
+     * Direct clock in from home page.
+     */
+    public function directClockIn(Request $request)
+    {
+        // For simplicity, we'll use the first active employee
+        // In a real application, you might want to get the logged-in user
+        $employee = Employee::where('status', 'active')->first();
+
+        if (!$employee) {
+            return redirect('/')
+                ->with('error', 'No active employee found. Please create an employee first.');
+        }
+
+        $today = Carbon::today()->toDateString();
+        $currentTime = Carbon::now()->toTimeString();
+
+        // Check if employee already clocked in today
+        $existingAttendance = TimeAttendance::where('employee_id', $employee->id)
+            ->where('date', $today)
+            ->first();
+
+        if ($existingAttendance) {
+            return redirect('/')
+                ->with('error', 'Employee already clocked in today.');
+        }
+
+        TimeAttendance::create([
+            'employee_id' => $employee->id,
+            'date' => $today,
+            'time_in' => $currentTime,
+            'status' => 'present',
+        ]);
+
+        return redirect()->route('/')
+            ->with('success', 'Clock in recorded successfully for ' . $employee->name . '.');
+    }
+
+    /**
+     * Direct clock out from home page.
+     */
+    public function directClockOut(Request $request)
+    {
+        // For simplicity, we'll use the first active employee
+        // In a real application, you might want to get the logged-in user
+        $employee = Employee::where('status', 'active')->first();
+
+        if (!$employee) {
+            return redirect('/')
+                ->with('error', 'No active employee found. Please create an employee first.');
+        }
+
+        $today = Carbon::today()->toDateString();
+        $currentTime = Carbon::now()->toTimeString();
+
+        // Check if employee has clocked in but not out today
+        $attendance = TimeAttendance::where('employee_id', $employee->id)
+            ->where('date', $today)
+            ->whereNull('time_out')
+            ->first();
+
+        if (!$attendance) {
+            return redirect()->route('/')
+                ->with('error', 'Employee has not clocked in today or already clocked out.');
+        }
+
+        $attendance->update([
+            'time_out' => $currentTime,
+        ]);
+
+        return redirect()->route('/')
+            ->with('success', 'Clock out recorded successfully for ' . $employee->name . '.');
+    }
+
+    /**
+     * Export time attendance data to Excel using Fast Excel.
+     */
+    public function exportToExcel(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $startDate = Carbon::parse($request->start_date)->toDateString();
+        $endDate = Carbon::parse($request->end_date)->toDateString();
+
+        $attendances = TimeAttendance::with('employee')
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date')
+            ->orderBy('employee_id')
+            ->get();
+
+        // Transform the collection for export
+        $exportData = $attendances->map(function ($attendance) {
+            return [
+                'Employee ID' => $attendance->employee->id,
+                'Employee Name' => $attendance->employee->name,
+                'Position' => $attendance->employee->position,
+                'Date' => $attendance->date,
+                'Time In' => $attendance->time_in ?? '-',
+                'Time Out' => $attendance->time_out ?? '-',
+                'Status' => $attendance->status,
+            ];
+        });
+
+        $filename = 'time_attendance_' . $startDate . '_to_' . $endDate . '.xlsx';
+
+        return (new FastExcel($exportData))->download($filename);
+    }
+}
