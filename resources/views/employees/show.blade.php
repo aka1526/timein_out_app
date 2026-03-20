@@ -88,6 +88,105 @@
         .detail-value {
             color: #34495e;
         }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .card {
+                margin-bottom: 15px;
+            }
+
+            .card-header {
+                padding: 15px;
+            }
+
+            .card-header h3 {
+                font-size: 1.5rem;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .profile-img {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+
+            .detail-label {
+                width: 120px;
+                font-size: 0.9rem;
+            }
+
+            .detail-value {
+                font-size: 0.9rem;
+            }
+
+            .table {
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+                margin-bottom: 5px;
+            }
+
+            .navigation-menu .btn {
+                font-size: 0.8rem;
+                padding: 12px 8px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .navigation-menu .btn i {
+                margin-right: 5px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Extra small devices (phones, 320px and down) */
+        @media (max-width: 320px) {
+            .profile-img {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+
+            .detail-label {
+                width: 100px;
+                font-size: 0.8rem;
+            }
+
+            .detail-value {
+                font-size: 0.8rem;
+            }
+
+            .navigation-menu .btn {
+                font-size: 0.7rem;
+                padding: 10px 5px;
+            }
+
+            .navigation-menu .btn i {
+                font-size: 0.9rem;
+                margin-right: 3px;
+            }
+
+            .btn {
+                font-size: 0.8rem;
+                padding: 8px 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -142,16 +241,14 @@
                             </table>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
-                            <div>
-                                <a href="{{ route('employees.index') }}" class="btn btn-secondary me-2">
-                                    <i class="bi bi-arrow-left me-1"></i> กลับ
-                                </a>
 
-                            </div>
-                            <div>
-                                <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning">
+                        <div class="action-buttons">
+                            <div class="d-flex flex-column gap-2">
+                                <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning w-100" onclick="return confirmEdit({{ $employee->id }})">
                                     <i class="bi bi-pencil me-1"></i> แก้ไขข้อมูล
+                                </a>
+                                <a href="{{ route('employees.index') }}" class="btn btn-secondary w-100">
+                                    <i class="bi bi-arrow-left me-1"></i> กลับหน้ารายการ
                                 </a>
                             </div>
                         </div>
@@ -162,5 +259,18 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmEdit(employeeId) {
+            const password = prompt('กรุณากรอกรหัสผ่านเพื่อแก้ไขข้อมูลพนักงาน:');
+            if (password === '7749') {
+                window.location.href = `/employees/${employeeId}/edit`;
+            } else if (password !== null) {
+                alert('รหัสผ่านไม่ถูกต้อง!');
+                return false;
+            } else {
+                return false;
+            }
+        }
+    </script>
 </body>
 </html>
