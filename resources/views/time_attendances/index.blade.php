@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกเวลาเข้า-ออกงาน</title>
+    <title>บันทึกเวลาปฏิบัติงาน</title>
         <link type="image/png" sizes="16x16" rel="icon" href="./icons8-time-machine-16.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -94,7 +94,7 @@
     <div class="container">
         <div class="card">
             <div class="card-header text-center">
-                <h2 class="mb-0"><i class="bi bi-clock-history me-2"></i> บันทึกเวลาเข้า-ออกงาน</h2>
+                <h2 class="mb-0"><i class="bi bi-clock-history me-2"></i> บันทึกเวลาปฏิบัติงาน</h2>
             </div>
             <div class="card-body p-4">
                 @if(session('success'))
@@ -107,11 +107,11 @@
                 <div class="row mb-4">
                     <div class="col-md-6">
                         <div class="d-flex gap-2">
-                            <a href="{{ route('time_attendances.clock_in') }}" class="btn btn-success">
-                                <i class="bi bi-box-arrow-in-right me-1"></i> ลงเวลาเข้างาน
+                            <a href="{{ route('time_attendances.morning_check_in') }}" class="btn btn-success">
+                                <i class="bi bi-sunrise me-1"></i> ลงเวลาเข้าเช้า
                             </a>
-                            <a href="{{ route('time_attendances.clock_out') }}" class="btn btn-warning">
-                                <i class="bi bi-box-arrow-right me-1"></i> ลงเวลาออกงาน
+                            <a href="{{ route('time_attendances.afternoon_check_in') }}" class="btn btn-warning">
+                                <i class="bi bi-sun me-1"></i> ลงเวลาเข้าบ่าย
                             </a>
                         </div>
                     </div>
@@ -145,8 +145,8 @@
                                 <th><i class="bi bi-person me-1"></i> พนักงาน</th>
                                 <th><i class="bi bi-briefcase me-1"></i> ตำแหน่ง</th>
                                 <th><i class="bi bi-calendar me-1"></i> วันที่</th>
-                                <th><i class="bi bi-door-open me-1"></i> เวลาเข้า</th>
-                                <th><i class="bi bi-door-closed me-1"></i> เวลาออก</th>
+                                <th><i class="bi bi-clock me-1"></i> เวลา</th>
+                                <th><i class="bi bi-tag me-1"></i> ประเภท</th>
                                 <th><i class="bi bi-info-circle me-1"></i> สถานะ</th>
                             </tr>
                         </thead>
@@ -165,24 +165,22 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($attendance->time_out)
-                                            <span class="text-primary">{{ \Carbon\Carbon::parse($attendance->time_out)->format('H:i') }}</span>
-                                        @else
-                                            <span class="text-muted">-</span>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        @if($attendance->status == 'present')
-                                            <span class="badge bg-success">มาปฏิบัติงาน</span>
+                                        @if($attendance->status == 'morning')
+                                            <span class="badge bg-success">เข้าเช้า</span>
+                                        @elseif($attendance->status == 'afternoon')
+                                            <span class="badge bg-warning">เข้าบ่าย</span>
                                         @else
                                             <span class="badge bg-secondary">{{ $attendance->status }}</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">ลงเวลาแล้ว</span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
                                     <td colspan="7" class="text-center text-muted py-3">
-                                        <i class="bi bi-inbox me-2"></i> ไม่พบข้อมูลบันทึกเวลาเข้า-ออกงาน
+                                        <i class="bi bi-inbox me-2"></i> ไม่พบข้อมูลบันทึกเวลาปฏิบัติงาน
                                     </td>
                                 </tr>
                             @endforelse

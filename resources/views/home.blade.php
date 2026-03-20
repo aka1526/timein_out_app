@@ -269,23 +269,6 @@
             <span><i class="bi bi-calendar3"></i> {{ date('d/m/Y') }} | <i class="bi bi-clock"></i> {{ date('H:i:s') }}</span>
         </div>
 
-        <div class="time-slots">
-            <h3><i class="bi bi-person-badge"></i> เรียน เจ้าหน้าที่ กวอ. ทุกท่าน</h3>
-            <p>เมื่อพร้อมปฏิบัติราชการตามรอบเวลา</p>
-
-            <div class="time-slot">
-                <i class="bi bi-sunrise"></i>
-                <strong>ตามรอบเวลา 07.30 - 15.30 น.</strong>
-            </div>
-            <div class="time-slot">
-                <i class="bi bi-sun"></i>
-                <strong>ตามรอบเวลา 08.30 - 16.30 น.</strong>
-            </div>
-            <div class="time-slot">
-                <i class="bi bi-sunset"></i>
-                <strong>ตามรอบเวลา 09.30 - 17.30 น.</strong>
-            </div>
-        </div>
 
 
 
@@ -304,11 +287,11 @@
         @endif
 
         <div class="action-buttons">
-            <button onclick="window.location.href='{{ route('time_attendances.clock_in') }}'" style="background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%); border: none; color: white; font-size: 1.3rem; font-weight: 600; padding: 15px 40px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;">
-                <i class="bi bi-box-arrow-in-right"></i> CHECK IN
+            <button onclick="window.location.href='{{ route('time_attendances.morning_check_in') }}'" style="background: linear-gradient(135deg, var(--success-color) 0%, #2ecc71 100%); border: none; color: white; font-size: 1.3rem; font-weight: 600; padding: 15px 40px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer;">
+                <i class="bi bi-sunrise"></i> ลงเวลาเข้าเช้า
             </button>
-            <button onclick="window.location.href='{{ route('time_attendances.clock_out') }}'" style="background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%); border: none; color: white; font-size: 1.3rem; font-weight: 600; padding: 15px 40px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-left: 20px;">
-                <i class="bi bi-box-arrow-right"></i> CHECK OUT
+            <button onclick="window.location.href='{{ route('time_attendances.afternoon_check_in') }}'" style="background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%); border: none; color: white; font-size: 1.3rem; font-weight: 600; padding: 15px 40px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-left: 20px;">
+                <i class="bi bi-sun"></i> ลงเวลาเข้าบ่าย
             </button>
         </div>
 

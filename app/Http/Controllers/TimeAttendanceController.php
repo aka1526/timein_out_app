@@ -23,18 +23,18 @@ class TimeAttendanceController extends Controller
     }
 
     /**
-     * Show the form for clocking in.
+     * Show the form for morning check-in.
      */
-    public function clockIn()
+    public function morningCheckIn()
     {
         $employees = Employee::where('status', 'active')->get();
-        return view('time_attendances.clock_in', compact('employees'));
+        return view('time_attendances.morning_check_in', compact('employees'));
     }
 
     /**
-     * Store a newly created clock in record.
+     * Store a newly created morning check-in record.
      */
-    public function storeClockIn(Request $request)
+    public function storeMorningCheckIn(Request $request)
     {
         // If no employee_id is provided (direct access from home), use the first active employee
         if (!$request->has('employee_id') || empty($request->employee_id)) {
@@ -57,77 +57,107 @@ class TimeAttendanceController extends Controller
         $today = Carbon::today()->toDateString();
         $currentTime = Carbon::now()->toTimeString();
 
-        // Check if employee already clocked in today
+        // Check if employee already has morning check-in today
         $existingAttendance = TimeAttendance::where('employee_id', $employeeId)
             ->where('date', $today)
+            ->where('status', 'morning')
             ->first();
 
         if ($existingAttendance) {
             // If accessed from home page, redirect back to home page
             if (!$request->has('employee_id') || empty($request->employee_id)) {
                 return redirect('/')
-                    ->with('error', 'Employee already clocked in today.');
+                    ->with('error', 'Employee already checked in for morning today.');
             }
 
             return redirect()->back()
-                ->with('error', 'Employee already clocked in today.');
+                ->with('error', 'Employee already checked in for morning today.');
         }
 
         TimeAttendance::create([
             'employee_id' => $employeeId,
             'date' => $today,
             'time_in' => $currentTime,
-            'status' => 'present',
+            'status' => 'morning',
         ]);
 
         // If accessed from home page, redirect back to home page
         if (!$request->has('employee_id') || empty($request->employee_id)) {
             return redirect('/')
-                ->with('success', 'Clock in recorded successfully.');
+                ->with('success', 'Morning check-in recorded successfully.');
         }
 
         return redirect()->route('time_attendances.index')
-            ->with('success', 'Clock in recorded successfully.');
+            ->with('success', 'Morning check-in recorded successfully.');
     }
 
     /**
-     * Show the form for clocking out.
+     * Show the form for afternoon check-in.
      */
-    public function clockOut()
+    public function afternoonCheckIn()
     {
         $employees = Employee::where('status', 'active')->get();
-        return view('time_attendances.clock_out', compact('employees'));
+        return view('time_attendances.afternoon_check_in', compact('employees'));
     }
 
     /**
-     * Update the clock out time.
+     * Store a newly created afternoon check-in record.
      */
-    public function updateClockOut(Request $request)
+    public function storeAfternoonCheckIn(Request $request)
     {
-        $request->validate([
-            'employee_id' => 'required|exists:employees,id',
-        ]);
+        // If no employee_id is provided (direct access from home), use the first active employee
+        if (!$request->has('employee_id') || empty($request->employee_id)) {
+            $employee = Employee::where('status', 'active')->first();
+
+            if (!$employee) {
+                return redirect('/')
+                    ->with('error', 'No active employee found. Please create an employee first.');
+            }
+
+            $employeeId = $employee->id;
+        } else {
+            $request->validate([
+                'employee_id' => 'required|exists:employees,id',
+            ]);
+
+            $employeeId = $request->employee_id;
+        }
 
         $today = Carbon::today()->toDateString();
         $currentTime = Carbon::now()->toTimeString();
 
-        // Check if employee has clocked in but not out today
-        $attendance = TimeAttendance::where('employee_id', $request->employee_id)
+        // Check if employee already has afternoon check-in today
+        $existingAttendance = TimeAttendance::where('employee_id', $employeeId)
             ->where('date', $today)
-            ->whereNull('time_out')
+            ->where('status', 'afternoon')
             ->first();
 
-        if (!$attendance) {
-            return redirect('/')
-                ->with('error', 'Employee has not clocked in today or already clocked out.');
+        if ($existingAttendance) {
+            // If accessed from home page, redirect back to home page
+            if (!$request->has('employee_id') || empty($request->employee_id)) {
+                return redirect('/')
+                    ->with('error', 'Employee already checked in for afternoon today.');
+            }
+
+            return redirect()->back()
+                ->with('error', 'Employee already checked in for afternoon today.');
         }
 
-        $attendance->update([
-            'time_out' => $currentTime,
+        TimeAttendance::create([
+            'employee_id' => $employeeId,
+            'date' => $today,
+            'time_in' => $currentTime,
+            'status' => 'afternoon',
         ]);
 
+        // If accessed from home page, redirect back to home page
+        if (!$request->has('employee_id') || empty($request->employee_id)) {
+            return redirect('/')
+                ->with('success', 'Afternoon check-in recorded successfully.');
+        }
+
         return redirect()->route('time_attendances.index')
-            ->with('success', 'Clock out recorded successfully.');
+            ->with('success', 'Afternoon check-in recorded successfully.');
     }
 
     /**
@@ -225,14 +255,21 @@ class TimeAttendanceController extends Controller
 
         // Transform the collection for export
         $exportData = $attendances->map(function ($attendance) {
+            $statusText = $attendance->status;
+            if ($attendance->status == 'morning') {
+                $statusText = 'เข้าเช้า';
+            } elseif ($attendance->status == 'afternoon') {
+                $statusText = 'เข้าบ่าย';
+            }
+
             return [
-                'Employee ID' => $attendance->employee->id,
-                'Employee Name' => $attendance->employee->name,
-                'Position' => $attendance->employee->position,
-                'Date' => $attendance->date,
-                'Time In' => $attendance->time_in ?? '-',
-                'Time Out' => $attendance->time_out ?? '-',
-                'Status' => $attendance->status,
+                'รหัสพนักงาน' => $attendance->employee->id,
+                'ชื่อพนักงาน' => $attendance->employee->name,
+                'ตำแหน่ง' => $attendance->employee->position,
+                'วันที่' => $attendance->date,
+                'เวลา' => $attendance->time_in ?? '-',
+                'ประเภท' => $statusText,
+                'สถานะ' => 'ลงเวลาแล้ว',
             ];
         });
 
