@@ -17,6 +17,7 @@ class TimeAttendanceController extends Controller
     {
         $attendances = TimeAttendance::with('employee')
             ->orderBy('date', 'desc')
+            ->orderBy('time_in', 'desc')
             ->get();
 
         return view('time_attendances.index', compact('attendances'));
