@@ -250,7 +250,8 @@ class TimeAttendanceController extends Controller
 
         $attendances = TimeAttendance::with('employee')
             ->whereBetween('date', [$startDate, $endDate])
-            ->orderBy('date')
+            ->orderBy('date' )
+            ->orderBy('time_in' )
             ->orderBy('employee_id')
             ->get();
 
