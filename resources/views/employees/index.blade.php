@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>จัดการพนักงาน</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
         <link type="image/png" sizes="16x16" rel="icon" href="./icons8-time-machine-16.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -94,6 +95,114 @@
         }
         .action-buttons .btn {
             margin: 0 2px;
+            min-width: 35px;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .card {
+                margin-bottom: 15px;
+            }
+
+            .card-header {
+                padding: 15px;
+            }
+
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                margin-bottom: 5px;
+            }
+
+            .table {
+                font-size: 0.85rem;
+            }
+
+            .table thead th {
+                font-size: 0.8rem;
+                padding: 8px 5px;
+            }
+
+            .table tbody td {
+                padding: 8px 5px;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 3px 6px;
+            }
+
+            .action-buttons .btn {
+                padding: 5px 8px;
+                font-size: 0.8rem;
+                min-width: 30px;
+            }
+
+            .navigation-menu .btn {
+                font-size: 0.8rem;
+                padding: 12px 8px;
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .navigation-menu .btn i {
+                margin-right: 5px;
+                font-size: 1rem;
+            }
+
+            .navigation-menu .btn.active {
+                box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+                transform: scale(1.02);
+            }
+        }
+
+        /* Medium devices (tablets, 768px and up) */
+        @media (min-width: 768px) and (max-width: 992px) {
+            .navigation-menu .btn {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+
+            .action-buttons .btn {
+                min-width: 40px;
+            }
+        }
+
+        /* Extra small devices (phones, 320px and down) */
+        @media (max-width: 320px) {
+            .navigation-menu .btn {
+                font-size: 0.7rem;
+                padding: 10px 5px;
+            }
+
+            .navigation-menu .btn i {
+                font-size: 0.9rem;
+                margin-right: 3px;
+            }
+
+            .action-buttons .btn {
+                padding: 4px 6px;
+                font-size: 0.7rem;
+                min-width: 25px;
+            }
         }
     </style>
 </head>
@@ -111,20 +220,22 @@
                     </div>
                 @endif
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                         <a href="/time-attendances" class="btn btn-info">
-                            <i class="bi bi-house-door me-1"></i> กลับ
-                        </a>
-                        <a href="{{ route('employees.create') }}" class="btn btn-primary">
-                            <i class="bi bi-person-plus me-1"></i> เพิ่มพนักงานใหม่
-                        </a>
-                    </div>
-                    <div>
-                        <a href="{{ route('time_attendances.index') }}" class="btn btn-secondary me-2">
-                            <i class="bi bi-clock-history me-1"></i> บันทึกเวลาเข้า-ออกงาน
-                        </a>
+                <div class="navigation-menu mb-4">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <div class="d-flex flex-column flex-md-row gap-2">
+                                <a href="/" class="btn btn-info flex-fill">
+                                    <i class="bi bi-house-door me-1"></i> <span class="d-sm-inline">หน้าหลัก</span>
+                                </a>
 
+
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <a href="{{ route('employees.create') }}" class="btn btn-primary w-100">
+                                <i class="bi bi-person-plus me-1"></i> เพิ่มพนักงานใหม่
+                            </a>
+                        </div>
                     </div>
                 </div>
 
@@ -132,9 +243,9 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
-                                <th><i class="bi bi-hash me-1"></i> ID</th>
+                                <th class="d-none d-md-table-cell"><i class="bi bi-hash me-1"></i> ID</th>
                                 <th><i class="bi bi-person me-1"></i> ชื่อพนักงาน</th>
-                                <th><i class="bi bi-briefcase me-1"></i> ตำแหน่ง</th>
+                                <th class="d-none d-md-table-cell"><i class="bi bi-briefcase me-1"></i> ตำแหน่ง</th>
                                 <th><i class="bi bi-toggle-on me-1"></i> สถานะ</th>
                                 <th><i class="bi bi-gear me-1"></i> การจัดการ</th>
                             </tr>
@@ -142,9 +253,14 @@
                         <tbody>
                             @forelse($employees as $employee)
                                 <tr>
-                                    <td>{{ $employee->id }}</td>
-                                    <td>{{ $employee->name }}</td>
-                                    <td>{{ $employee->position }}</td>
+                                    <td class="d-none d-md-table-cell">{{ $employee->id }}</td>
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <span>{{ $employee->name }}</span>
+                                            <small class="text-muted d-md-none">{{ $employee->position }}</small>
+                                        </div>
+                                    </td>
+                                    <td class="d-none d-md-table-cell">{{ $employee->position }}</td>
                                     <td>
                                         @if($employee->status == 'active')
                                             <span class="badge bg-success">ใช้งาน</span>
@@ -153,19 +269,18 @@
                                         @endif
                                     </td>
                                     <td class="action-buttons">
-                                        <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-info btn-sm">
+                                        <a href="{{ route('employees.show', $employee->id) }}" class="btn btn-info btn-sm" title="ดูรายละเอียด">
                                             <i class="bi bi-eye"></i>
+                                            <span class="d-none d-lg-inline ms-1">ดู</span>
                                         </a>
-                                        <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning btn-sm">
+                                        <button onclick="confirmEdit('{{ $employee->id }}')" class="btn btn-warning btn-sm" title="แก้ไข">
                                             <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" style="display: inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('คุณแน่ใจหรือไม่ที่จะลบพนักงานคนนี?')">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
+                                            <span class="d-none d-lg-inline ms-1">แก้ไข</span>
+                                        </button>
+                                        <button onclick="confirmDelete('{{ $employee->id }}')" class="btn btn-danger btn-sm" title="ลบ">
+                                            <i class="bi bi-trash"></i>
+                                            <span class="d-none d-lg-inline ms-1">ลบ</span>
+                                        </button>
                                     </td>
                                 </tr>
                             @empty
@@ -190,5 +305,44 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function confirmEdit(employeeId) {
+            const password = prompt('กรุณากรอกรหัสผ่านเพื่อแก้ไขข้อมูลพนักงาน:');
+            if (password === '7749') {
+                window.location.href = `/employees/${employeeId}/edit`;
+            } else if (password !== null) {
+                alert('รหัสผ่านไม่ถูกต้อง!');
+            }
+        }
+
+        function confirmDelete(employeeId) {
+            const password = prompt('กรุณากรอกรหัสผ่านเพื่อลบข้อมูลพนักงาน:');
+            if (password === '7749') {
+                if (confirm('คุณแน่ใจหรือไม่ที่จะลบพนักงานคนนี?')) {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/employees/${employeeId}`;
+
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = csrfToken;
+
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+
+                    form.appendChild(csrfInput);
+                    form.appendChild(methodInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            } else if (password !== null) {
+                alert('รหัสผ่านไม่ถูกต้อง!');
+            }
+        }
+    </script>
 </body>
 </html>

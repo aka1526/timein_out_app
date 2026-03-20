@@ -165,12 +165,13 @@
             display: flex;
             justify-content: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .btn-check {
-            font-size: 1.3rem;
+            font-size: 1.1rem;
             font-weight: 600;
-            padding: 15px 40px;
+            padding: 15px 30px;
             border-radius: 50px;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -180,6 +181,9 @@
             overflow: hidden;
             z-index: 2;
             cursor: pointer !important;
+            flex: 1 1 auto;
+            min-width: 200px;
+            max-width: 300px;
         }
 
         .btn-check::before {
@@ -332,3 +336,4 @@
     </script>
 </body>
 </html>
+

@@ -20,6 +20,7 @@
             max-width: 600px;
             width: 100%;
             margin: 0 auto;
+            padding: 0 15px;
         }
         .form-container {
             background: white;
@@ -61,6 +62,36 @@
             width: 100%;
             margin-top: 20px;
             transition: all 0.3s ease;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0;
+            }
+
+            .main-container {
+                padding: 0 10px;
+            }
+
+            .form-container {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+
+            .header-icon {
+                font-size: 2.5rem;
+                margin-bottom: 15px;
+            }
+
+            .btn-submit {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
         }
         .btn-submit:hover {
             transform: translateY(-2px);

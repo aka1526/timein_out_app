@@ -145,11 +145,9 @@
                         <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
                             <div>
                                 <a href="{{ route('employees.index') }}" class="btn btn-secondary me-2">
-                                    <i class="bi bi-arrow-left me-1"></i> กลับหน้ารายการ
+                                    <i class="bi bi-arrow-left me-1"></i> กลับ
                                 </a>
-                                <a href="/" class="btn btn-info">
-                                    <i class="bi bi-house-door me-1"></i> หน้าหลัก
-                                </a>
+
                             </div>
                             <div>
                                 <a href="{{ route('employees.edit', $employee->id) }}" class="btn btn-warning">

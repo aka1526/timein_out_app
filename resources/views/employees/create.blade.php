@@ -109,12 +109,13 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="{{ route('employees.index') }}" class="btn btn-secondary">
-                                    <i class="bi bi-x-circle me-1"></i> ยกเลิก
-                                </a>
-                                <a href="/" class="btn btn-info">
+                               <a href="/" class="btn btn-warning">
                                     <i class="bi bi-house-door me-1"></i> หน้าหลัก
                                 </a>
+                                <a href="{{ route('employees.index') }}" class="btn btn-danger">
+                                    <i class="bi bi-x-circle me-1"></i> ยกเลิก
+                                </a>
+
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-check-circle me-1"></i> บันทึกข้อมูล
                                 </button>

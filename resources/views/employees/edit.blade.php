@@ -110,15 +110,16 @@
                             </div>
 
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <a href="{{ route('employees.index') }}" class="btn btn-secondary">
-                                    <i class="bi bi-x-circle me-1"></i> ยกเลิก
-                                </a>
-                                <a href="/" class="btn btn-info">
-                                    <i class="bi bi-house-door me-1"></i> หน้าหลัก
-                                </a>
-                                <button type="submit" class="btn btn-primary">
+                               <button type="submit" class="btn btn-success">
                                     <i class="bi bi-check-circle me-1"></i> อัปเดตข้อมูล
                                 </button>
+                                <a href="{{ route('employees.index') }}" class="btn btn-danger">
+                                    <i class="bi bi-x-circle me-1"></i> ยกเลิก
+                                </a>
+                                <a href="/employees" class="btn btn-info">
+                                    <i class="bi bi-arrow-left me-1"></i> กลับสู่หน้าจัดการพนักงาน
+                                </a>
+
                             </div>
                         </form>
                     </div>

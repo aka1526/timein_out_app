@@ -83,10 +83,134 @@
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 4px solid #3498db;
+        }
+
+        .export-form .form-label {
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .export-form .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .export-form .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .export-form .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .export-form .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
         }
         .alert {
             border-radius: 10px;
             border: none;
+        }
+
+        /* Mobile responsive styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px 0;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .card {
+                margin-bottom: 15px;
+            }
+
+            .card-header {
+                padding: 15px;
+            }
+
+            .card-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .btn {
+                font-size: 0.9rem;
+                padding: 8px 12px;
+                margin-bottom: 5px;
+            }
+
+            .table {
+                font-size: 0.85rem;
+            }
+
+            .table thead th {
+                font-size: 0.8rem;
+                padding: 8px 5px;
+            }
+
+            .table tbody td {
+                padding: 8px 5px;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 3px 6px;
+            }
+
+            .export-form {
+                padding: 10px;
+            }
+
+            .d-flex justify-content-between {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .d-flex justify-content-between > div {
+                width: 100%;
+            }
+
+            .d-flex justify-content-between a {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+
+            .navigation-menu .btn {
+                font-size: 0.8rem;
+                padding: 10px 5px;
+                border-radius: 20px;
+            }
+
+            .navigation-menu .btn i {
+                display: block;
+                margin: 0 auto 5px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Extra small devices (phones, 320px and down) */
+        @media (max-width: 320px) {
+            .navigation-menu .btn {
+                font-size: 0.7rem;
+                padding: 8px 4px;
+            }
+
+            .navigation-menu .btn i {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -105,35 +229,36 @@
                 @endif
 
                 <div class="row mb-4">
-                    <div class="col-md-6">
-                        <div class="d-flex gap-2">
-                            <a href="{{ route('time_attendances.morning_check_in') }}" class="btn btn-success">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ route('time_attendances.morning_check_in') }}" class="btn btn-success flex-fill">
                                 <i class="bi bi-sunrise me-1"></i> ลงเวลาเข้าเช้า
                             </a>
-                            <a href="{{ route('time_attendances.afternoon_check_in') }}" class="btn btn-warning">
+                            <a href="{{ route('time_attendances.afternoon_check_in') }}" class="btn btn-warning flex-fill">
                                 <i class="bi bi-sun me-1"></i> ลงเวลาเข้าบ่าย
                             </a>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <form action="{{ route('time_attendances.export') }}" method="GET" class="export-form">
-                            <div class="row g-2 align-items-center">
-                                <div class="col">
-                                    <label for="start_date" class="form-label small mb-0">จากวันที่</label>
-                                    <input type="date" name="start_date" class="form-control form-control-sm" required>
+                        <div class="export-form p-3 rounded bg-light">
+                            <form action="{{ route('time_attendances.export') }}" method="GET">
+                                <div class="row g-3 align-items-end">
+                                    <div class="col-md-4">
+                                        <label for="start_date" class="form-label fw-bold">จากวันที่</label>
+                                        <input type="date" name="start_date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="end_date" class="form-label fw-bold">ถึงวันที่</label>
+                                        <input type="date" name="end_date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            <i class="bi bi-file-earmark-excel me-2"></i> ส่งออก Excel
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="col">
-                                    <label for="end_date" class="form-label small mb-0">ถึงวันที่</label>
-                                    <input type="date" name="end_date" class="form-control form-control-sm" required>
-                                </div>
-                                <div class="col-auto">
-                                    <label class="form-label small mb-0">&nbsp;</label>
-                                    <button type="submit" class="btn btn-primary btn-sm d-block">
-                                        <i class="bi bi-file-earmark-excel me-1"></i> ส่งออก Excel
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
@@ -168,7 +293,7 @@
                                         @if($attendance->status == 'morning')
                                             <span class="badge bg-success">เข้าเช้า</span>
                                         @elseif($attendance->status == 'afternoon')
-                                            <span class="badge bg-warning">เข้าบ่าย</span>
+                                            <span class="badge bg-danger">เข้าบ่าย</span>
                                         @else
                                             <span class="badge bg-secondary">{{ $attendance->status }}</span>
                                         @endif
@@ -188,18 +313,25 @@
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <div class="text-muted small">
-                        <i class="bi bi-info-circle me-1"></i>
-                        แสดงข้อมูล {{ count($attendances) }} รายการ
-                    </div>
-                    <div>
-                         <a href="/" class="btn btn-primary">
-                            <i class="bi bi-house-door me-1"></i> หน้าหลัก
-                        </a>
-                        <a href="{{ route('employees.index') }}" class="btn btn-secondary">
-                            <i class="bi bi-people me-1"></i> จัดการพนักงาน
-                        </a>
+                <div class="navigation-menu mt-4">
+                    <div class="row g-2">
+                        <div class="col-12 text-center mb-2">
+                            <div class="text-muted small">
+                                <i class="bi bi-info-circle me-1"></i>
+                                แสดงข้อมูล {{ count($attendances) }} รายการ
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <a href="/" class="btn btn-warning w-100">
+                                <i class="bi bi-house-door me-1"></i> หน้าหลัก
+                            </a>
+                        </div>
+
+                        <div class="col-6">
+                            <a href="{{ route('employees.index') }}" class="btn btn-secondary w-100">
+                                <i class="bi bi-people me-1"></i> จัดการพนักงาน
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
